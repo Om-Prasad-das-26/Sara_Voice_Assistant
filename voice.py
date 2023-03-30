@@ -5,6 +5,7 @@ import pyttsx3
 import datetime
 import geocoder
 import requests
+import pywhatkit
 
 
 # Initialize the speech recognition engine
@@ -63,38 +64,25 @@ def turn_off_lights():
 
 
 # Define a function to play a song from YouTube
-def play_song():
-    # Ask the user for the song name
+def talk(command):
+    engine.say("playing "+command)
+    
+def takecommand():
+    listener= sr.Recognizer()
     speak("What song would you like me to play?")
-    song_name = get_input()
+    try:
+        with sr.Microphone() as source:
+            print("Listening......")
+            voice= listener.listen(source)
+            command= listener.recognize_google(voice)
+            song = command.replace('play','')
+            
+            talk(song)
+            pywhatkit.playonyt(song)
+    
+    except:
+        pass
 
-    # Search YouTube for the song
-    search_url = "https://www.youtube.com/results?search_query=" + song_name.replace(" ", "+")
-    webbrowser.open(search_url)
-
-
-    # Wait for the video to load
-    time.sleep(1)
-
-    # Send keyboard shortcuts to start playing the video
-    keyboard.press_and_release('k')
-    keyboard.press_and_release(Key.right)
-    keyboard.press_and_release(Key.right)
-
-    # Listen for pause command
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        while True:
-            audio = r.listen(source)
-            try:
-                command = r.recognize_google(audio)
-                if "pause" in command:
-                    keyboard.press_and_release('k')
-                    speak("Song paused.")
-                else:
-                    speak("I'm sorry, I didn't understand.")
-            except:
-                pass
 
 # Define a function to fetch the current weather data 
 def get_current_weather(city_name):
@@ -138,7 +126,7 @@ command_map = {
     "what time is it": tell_time,
     "goodbye": exit,
     "turn off the lights" : turn_off_lights,
-    "play me a song" : play_song,
+    "play me a song" : takecommand,
     "what's the weather" : lambda: get_current_weather(get_current_city()),
     "my current location" : lambda: get_current_location(),
     
