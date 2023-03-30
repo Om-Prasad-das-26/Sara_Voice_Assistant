@@ -1,6 +1,4 @@
 import speech_recognition as sr
-import webbrowser
-import keyboard
 import pyttsx3
 import datetime
 import geocoder
@@ -17,6 +15,7 @@ voices = engine.getProperty('voices')
 
 voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-GB_HAZEL_11.0"
 engine.setProperty('voice', voice_id)
+engine.setProperty('rate', 150)
 
 # Use the speak() function to speak
 engine.say("Hello, I am sara the voice assistant, how may i help you??")
@@ -95,7 +94,7 @@ def get_current_weather(city_name):
         data = response.json()
         temperature = data["main"]["temp"]
         description = data["weather"][0]["description"]
-        speak(f"The current weather in {city_name} is {description} with a temperature of {temperature} degrees Celsius.")
+        speak(f"The current weather in your city is {description} with a temperature of {temperature} degrees Celsius.")
     else:
         speak("Sorry, I was unable to fetch the current weather data.")
 
@@ -112,9 +111,8 @@ def get_current_location():
     city = data["city"]
     region = data["region"]
     country = data["country"]
-    speak(f"You are currently in {city}, {region}, {country}")
-
-
+    speak(f"You are currently in {region}, {country}, {city}")
+    
 # Define a function to generate speech output
 def speak(text):
     engine.say(text)
